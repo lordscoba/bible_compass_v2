@@ -1,0 +1,41 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:android:c130e0893e75c3a6b164d6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:ios:63e924eb7ae41042b164d6",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:ios:63e924eb7ae41042b164d6",
+          "uploadDebugSymbols": true,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bible-compass",
+          "configurations": {
+            "android": "1:488717454819:android:c130e0893e75c3a6b164d6",
+            "ios": "1:488717454819:ios:63e924eb7ae41042b164d6",
+            "macos": "1:488717454819:ios:63e924eb7ae41042b164d6",
+            "web": "1:488717454819:web:7b1ccd99a6ce7e9ab164d6",
+            "windows": "1:488717454819:web:4f007c1626d6f3d2b164d6"
+          }
+        }
+      }
+    }
+  }
+}

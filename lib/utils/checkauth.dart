@@ -1,0 +1,82 @@
+import 'dart:convert';
+import 'package:bible_compass_app/domain/providers/authproviders.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
+/// Reads cached token, sets a simple boolean for legacy callers,
+/// emits auth events for the router, and hydrates loginProvider from cache.
+Future<void> checkAuth(WidgetRef ref) async {
+  final prefs = await ref.read(sharedPrefProvider.future);
+
+  final token = prefs.getString('token') ?? '';
+  final isLoggedIn = token.isNotEmpty && !JwtDecoder.isExpired(token);
+
+  // Keep legacy flag in prefs
+  await prefs.setBool('status', isLoggedIn);
+
+  // Notify router listeners
+  ref.read(authEventsProvider).add(isLoggedIn);
+
+  // Hydrate login state from cached JSON (if present)
+  final detailsRaw = prefs.getString('details');
+  if (isLoggedIn && detailsRaw != null && detailsRaw.isNotEmpty) {
+    final details = jsonDecode(detailsRaw) as Map<String, dynamic>;
+    ref.read(loginProvider.notifier).hydrateFromCache(details);
+  }
+}
+
+// import 'dart:convert';
+
+// import 'package:bible_compass_app/domain/models/user/user.dart';
+// import 'package:bible_compass_app/domain/providers/authproviders.dart';
+// import 'package:jwt_decoder/jwt_decoder.dart';
+
+// void checkAuth(dynamic ref, UserModel user, AuthState userstate) async {
+//   final prefs = await ref.watch(sharedPrefProvider);
+
+//   // get token
+//   final String token = prefs.getString('token') ?? '';
+
+//   //check if token has expired
+//   bool hasExpired = false;
+//   if (token.isNotEmpty) {
+//     hasExpired = JwtDecoder.isExpired(token);
+//   }
+
+//   // check if its authenticated
+//   if (!hasExpired && token.isNotEmpty) {
+//     //important auth variable
+//     ref.watch(isAuthenticated.notifier).state = true;
+//     await prefs.setBool('status', true);
+//     //important ends
+
+//     // since auth is active get details from cache and update provider
+//     final String details = prefs.getString('details') ?? '';
+//     Map<String, dynamic> details1 = jsonDecode(details);
+//     ref.read(loginProvider.notifier).state =
+//         userstate.copyWith(isLoading: false, data: details1, error: '');
+//   } else if (hasExpired && token.isNotEmpty) {
+//     //important auth variable
+//     ref.watch(isAuthenticated.notifier).state = true;
+//     await prefs.setBool('status', true);
+//     //important ends
+
+//     // perform login if its not authenticated
+//     final String password = prefs.getString('password') ?? '';
+//     final String email = prefs.getString('email') ?? '';
+//     if (email.isNotEmpty && password.isNotEmpty) {
+//       user = user.copyWith(email: email);
+//       user = user.copyWith(password: password);
+
+//       Future.delayed(const Duration(milliseconds: 500), () async {
+//         await ref.read(loginProvider.notifier).performLogin(user.toJson());
+//       });
+//     }
+//     // perform login ends
+//   } else {
+//     //important auth variable
+//     await prefs.setBool('status', false);
+//     ref.watch(isAuthenticated.notifier).state = false;
+//     //important ends
+//   }
+// }

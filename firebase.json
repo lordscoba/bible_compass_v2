@@ -1,0 +1,37 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:android:c130e0893e75c3a6b164d6",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:ios:63e924eb7ae41042b164d6",
+          "uploadDebugSymbols": true,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "bible-compass",
+          "appId": "1:488717454819:ios:63e924eb7ae41042b164d6",
+          "uploadDebugSymbols": true,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "bible-compass",
+          "configurations": {
+            "ios": "1:488717454819:ios:63e924eb7ae41042b164d6"
+          }
+        }
+      }
+    }
+  }
+}

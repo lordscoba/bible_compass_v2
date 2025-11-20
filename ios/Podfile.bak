@@ -1,0 +1,83 @@
+platform :ios, '14.0'
+ENV['COCOAPODS_DISABLE_STATS'] = 'true'
+
+project 'Runner', {
+  'Debug' => :debug,
+  'Profile' => :release,
+  'Release' => :release,
+}
+
+def flutter_root
+  generated = File.expand_path(File.join('..','Flutter','Generated.xcconfig'), __FILE__)
+  raise "#{generated} must exist. Run `flutter pub get` first." unless File.exist?(generated)
+  File.foreach(generated) do |line|
+    m = line.match(/FLUTTER_ROOT=(.*)/)
+    return m[1].strip if m
+  end
+  raise "FLUTTER_ROOT not found in #{generated}"
+end
+
+require File.expand_path(File.join('packages','flutter_tools','bin','podhelper'), flutter_root)
+flutter_ios_podfile_setup
+
+
+# === Skip specific Flutter plugins on iOS ===
+# List any Flutter plugin names you want to exclude from iOS here.
+EXCLUDED_FLUTTER_PLUGINS_IOS = %w[
+  firebase_core
+  firebase_crashlytics
+  firebase_auth
+  cloud_firestore
+  firebase_analytics
+]
+
+# Save original method from podhelper.rb
+alias :_flutter_install_plugin_pods_original :flutter_install_plugin_pods
+
+# Override to filter plugins for iOS
+def flutter_install_plugin_pods(application_path = nil, relative_symlink_dir, platform)
+  if platform == 'ios'
+    # Read original plugin list
+    application_path ||= File.dirname(defined_in_file.realpath) if respond_to?(:defined_in_file)
+    raise 'Could not find application path' unless application_path
+    plugins_file = File.join(application_path, '..', '.flutter-plugins-dependencies')
+    dependencies_hash = flutter_parse_plugins_file(plugins_file)
+    plugin_pods = flutter_get_plugins_list(dependencies_hash, platform)
+
+    # Write a temp plugins file that excludes the ones we don’t want
+    filtered = plugin_pods.reject { |p| EXCLUDED_FLUTTER_PLUGINS_IOS.include?(p['name']) }
+    filtered_hash = dependencies_hash.dup
+    filtered_hash['plugins'] ||= {}
+    filtered_hash['plugins'][platform] = filtered
+
+    # Monkey-patch read to return filtered list just for this call
+    def flutter_get_plugins_list(deps, plat)
+      return [] unless deps.any? && deps.has_key?('plugins') && deps['plugins'].has_key?(plat)
+      deps['plugins'][plat] || []
+    end
+
+    # Proceed with original installer using filtered hash/path setup
+    # Recreate symlink dir then call original which will read the same file again,
+    # but our overriden flutter_get_plugins_list returns the filtered list.
+  end
+
+  _flutter_install_plugin_pods_original(application_path, relative_symlink_dir, platform)
+end
+
+target 'Runner' do
+  use_frameworks!
+  flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+  target 'RunnerTests' do
+    inherit! :search_paths
+  end
+end
+
+# Only ONE post_install is allowed
+post_install do |installer|
+  installer.pods_project.targets.each do |t|
+    flutter_additional_ios_build_settings(t)
+    t.build_configurations.each do |c|
+      c.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
+    end
+  end
+end
