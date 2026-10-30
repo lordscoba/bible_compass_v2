@@ -30,8 +30,13 @@ migrate_working_dir/
 .flutter-plugins-dependencies
 .pub-cache/
 .pub/
-/build/
+**/build/
 /coverage/
+
+# Android packages, including copies outside build directories
+*.apk
+*.aab
+*.apks
 
 # Symbolication related
 app.*.symbols
