@@ -49,13 +49,13 @@ dependencies:
   select_form_field: ^2.2.0
   shared_preferences: ^2.1.2
   flutter_fadein: ^2.0.0
-  share_plus: ^12.0.0
+  share_plus: ^13.3.1
   jwt_decoder: ^2.0.1
   google_fonts: ^6.1.0
   accordion: ^2.5.1
   tuple: ^2.0.2
-  firebase_core: ^4.2.0
-  firebase_crashlytics: ^5.0.3
+  firebase_core: ^5.1.0
+  firebase_crashlytics: ^6.0.1
   intl: ^0.20.2
   flutter_native_splash: ^2.4.7
 

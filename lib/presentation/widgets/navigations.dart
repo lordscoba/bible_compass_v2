@@ -52,7 +52,7 @@ class _BottomItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final active = Colors.white;
-    final inactive = Colors.white.withOpacity(0.85);
+    final inactive = Colors.white.withValues(alpha: 0.85);
 
     return InkWell(
       onTap: onTap,

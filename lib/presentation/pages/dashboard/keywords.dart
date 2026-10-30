@@ -375,7 +375,7 @@ class MyChip extends StatelessWidget {
                   ),
                 ),
               ),
-              if (favButton != null) favButton!,
+              ?favButton,
             ],
           ),
         ),
